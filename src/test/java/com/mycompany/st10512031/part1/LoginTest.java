@@ -3,6 +3,7 @@
  * Unit tests for the Login class.
  * Author: Student
  * Student Number: ST10512031
+ * Date: 2026
  */
 
 package com.mycompany.st10512031.part1;
@@ -15,30 +16,101 @@ public class LoginTest {
     Login login = new Login();
 
     @Test
-    public void testCheckUserName() {
+    public void testCheckUserName_Valid() {
         assertTrue(login.checkUserName("kyl_1"));
+    }
+
+    @Test
+    public void testCheckUserName_NoUnderscore() {
         assertFalse(login.checkUserName("kyle!!!!!!"));
+    }
+
+    @Test
+    public void testCheckUserName_TooLong() {
         assertFalse(login.checkUserName("kyle_12345"));
     }
 
     @Test
-    public void testCheckPasswordComplexity() {
+    public void testCheckPasswordComplexity_Valid() {
         assertTrue(login.checkPasswordComplexity("Ch&sec@ke99!"));
+    }
+
+    @Test
+    public void testCheckPasswordComplexity_TooShort() {
         assertFalse(login.checkPasswordComplexity("Pass1!"));
+    }
+
+    @Test
+    public void testCheckPasswordComplexity_NoCapital() {
         assertFalse(login.checkPasswordComplexity("p@ssword1"));
+    }
+
+    @Test
+    public void testCheckPasswordComplexity_NoNumber() {
         assertFalse(login.checkPasswordComplexity("Password!"));
+    }
+
+    @Test
+    public void testCheckPasswordComplexity_NoSpecial() {
         assertFalse(login.checkPasswordComplexity("Password1"));
     }
 
     @Test
-    public void testCheckCellPhoneNumber() {
+    public void testCheckCellPhoneNumber_Valid() {
         assertTrue(login.checkCellPhoneNumber("+27838968976"));
+    }
+
+    @Test
+    public void testCheckCellPhoneNumber_NoInternationalCode() {
         assertFalse(login.checkCellPhoneNumber("08966553"));
+    }
+
+    @Test
+    public void testCheckCellPhoneNumber_TooLong() {
         assertFalse(login.checkCellPhoneNumber("+27838968976123"));
     }
 
     @Test
-    public void testRegisterUser() {
+    public void testLoginUser_Success() {
+        login.registerUser(
+                "kyl_1",
+                "Ch&sec@ke99!",
+                "+27838968976",
+                "Kyle",
+                "Smith"
+        );
+
+        assertTrue(login.loginUser("kyl_1", "Ch&sec@ke99!"));
+    }
+
+    @Test
+    public void testLoginUser_WrongPassword() {
+        login.registerUser(
+                "kyl_1",
+                "Ch&sec@ke99!",
+                "+27838968976",
+                "Kyle",
+                "Smith"
+        );
+
+        assertFalse(login.loginUser("kyl_1", "WrongPassword1!"));
+    }
+
+    @Test
+    public void testLoginUser_WrongUsername() {
+        login.registerUser(
+                "kyl_1",
+                "Ch&sec@ke99!",
+                "+27838968976",
+                "Kyle",
+                "Smith"
+        );
+
+        assertFalse(login.loginUser("wrong_user", "Ch&sec@ke99!"));
+    }
+
+    @Test
+    public void testRegisterUser_Success() {
         String result = login.registerUser(
                 "kyl_1",
                 "Ch&sec@ke99!",
@@ -51,7 +123,7 @@ public class LoginTest {
     }
 
     @Test
-    public void testRegisterUserInvalidUsername() {
+    public void testRegisterUser_BadUsername() {
         String result = login.registerUser(
                 "kyle!!!!!!",
                 "Ch&sec@ke99!",
@@ -69,7 +141,7 @@ public class LoginTest {
     }
 
     @Test
-    public void testRegisterUserInvalidPassword() {
+    public void testRegisterUser_BadPassword() {
         String result = login.registerUser(
                 "kyl_1",
                 "password",
@@ -87,7 +159,7 @@ public class LoginTest {
     }
 
     @Test
-    public void testRegisterUserInvalidCellPhone() {
+    public void testRegisterUser_BadCellPhone() {
         String result = login.registerUser(
                 "kyl_1",
                 "Ch&sec@ke99!",
@@ -104,22 +176,7 @@ public class LoginTest {
     }
 
     @Test
-    public void testLoginUser() {
-        login.registerUser(
-                "kyl_1",
-                "Ch&sec@ke99!",
-                "+27838968976",
-                "Kyle",
-                "Smith"
-        );
-
-        assertTrue(login.loginUser("kyl_1", "Ch&sec@ke99!"));
-        assertFalse(login.loginUser("kyl_1", "WrongPassword1!"));
-        assertFalse(login.loginUser("wrong_user", "Ch&sec@ke99!"));
-    }
-
-    @Test
-    public void testReturnLoginStatus() {
+    public void testReturnLoginStatus_Success() {
         login.registerUser(
                 "kyl_1",
                 "Ch&sec@ke99!",
@@ -132,10 +189,26 @@ public class LoginTest {
                 "Welcome Kyle, Smith it is great to see you again.",
                 login.returnLoginStatus(true)
         );
+    }
 
+    @Test
+    public void testReturnLoginStatus_Failure() {
         assertEquals(
                 "Username or password incorrect, please try again.",
                 login.returnLoginStatus(false)
         );
+    }
+
+    @Test
+    public void testGetRegisteredUsername() {
+        login.registerUser(
+                "kyl_1",
+                "Ch&sec@ke99!",
+                "+27838968976",
+                "Kyle",
+                "Smith"
+        );
+
+        assertEquals("kyl_1", login.getRegisteredUsername());
     }
 }
